@@ -9,9 +9,10 @@
     xmlns:core="sap.ui.core"
 	xmlns:suite="sap.suite.ui.commons"
 	xmlns:viz="sap.viz.ui5.controls"
-	xmlns:layout="sap.ui.layout">
+	xmlns:layout="sap.ui.layout"
+    xmlns:ng="sap.suite.ui.commons.networkgraph">
     <MessageStrip
-        text="The search tool is powered by the in-database embeddings from SAP HANA Cloud."
+        text="The search tool is powered by Semantics search (in-database embeddings) from SAP HANA Cloud."
         showIcon="true"
         customIcon="sap-icon://search"
         showCloseButton="true"
@@ -31,7 +32,7 @@
             binding="{/getAiResponse(...)}" />
         <ToolbarSpacer />
     </OverflowToolbar>
-    <f:GridList
+        <f:GridList
         id="gridList"
         headerText=""
         items="{search>/similarities}"
@@ -74,4 +75,6 @@
                 illustrationType="sapIllus-NoSearchResults" />
         </f:noData>
     </f:GridList>
+     
+    
 </core:FragmentDefinition>

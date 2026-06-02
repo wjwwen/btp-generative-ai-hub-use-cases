@@ -609,13 +609,13 @@ SELECT *
 FROM SPARQL_TABLE('
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix : <http://www.semanticweb.org/ontologies/2025/advisory-ontology-test/>
+prefix : <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>
 prefix owl: <http://www.w3.org/2002/07/owl#>
 prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT ?partner ?pbcOrderNumber
 FROM <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test>
-FROM <http://www.semanticweb.org/ontologies/2025/advisory-inferred-triples-v4>
+FROM <http://www.semanticweb.org/ontologies/2025/advisory-inferred-triples>
 WHERE {
 ?partner a :SAPPartner .
 ?partner :requested ?serviceRequest .
@@ -634,13 +634,13 @@ FROM TABLE_KG
     // FROM SPARQL_TABLE('
     // prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     // prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    // prefix : <http://www.semanticweb.org/ontologies/2025/advisory-ontology-test/>
+    // prefix : <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>
     // prefix owl: <http://www.w3.org/2002/07/owl#>
     // prefix foaf: <http://xmlns.com/foaf/0.1/>
     // prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     // SELECT ?pbcOrderNumber ?sapEmployee
-    // FROM <http://www.semanticweb.org/ontologies/2025/advisory-ontology-test/>
-    // FROM <http://www.semanticweb.org/ontologies/2025/advisory-ontology-test/>
+    // FROM <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>
+    // FROM <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>
     // WHERE {
     // ?serviceRequest a :SAPServiceRequest;
     // :hasUseCase ?useCase;
@@ -660,180 +660,183 @@ FROM TABLE_KG
     // FROM TABLE_KG
     // `;
     
-    const completeOntologyTTL = `@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-    @prefix owl: <http://www.w3.org/2002/07/owl#>.
-    @prefix foaf: <http://xmlns.com/foaf/0.1/>.
-    @prefix : <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>.
-    
-    :SAPPartner :accountName xsd:string .
-    :UseCase :aiScenarioType :SAPAIScenario .
-    :SAPServiceRequest :belongsToIndustry :Industry .
-    :SAPServiceRequest :belongsToSAPProgram :SAPProgramInitiative .
-    :Country :belongsToSAPRegion :SAPRegion .
-    :UseCase :belongsToServiceRequest :SAPServiceRequest .
-    :UseCase :btpScenarioType :SAPBTPScenario .
-    :SAPService :completionDate xsd:date .
-    :SAPServiceRequest :consistsOf :SAPService .
-    :Country :countryCode xsd:string .
-    :SAPServiceRequest :coversProduct :Product .
-    :SAPService :deliveredBy :SAPEmployee .
-    :SAPServiceRequest :executedBy :SAPEmployee .
-    :UseCase :hasCustomer xsd:boolean .
-    :UseCase :hasGTMOutcome :GTMOutcome .
-    :SAPServiceRequest :hasGTMRoute :GTMRoute .
-    :SAPService :hasPBCOrderNumber xsd:string .
-    :SAPServiceRequest :hasPartnerContact :SAPPartnerEmployee .
-    :SAPPartner :hasPartnerType :SAPPartnerType .
-    :SAPPartner :hasPartnershipType :SAPPartnershipType .
-    :SAPServiceType :hasSAPContact :SAPEmployee .
-    :SAPServiceRequest :hasSolution xsd:boolean .
-    :UseCase :hasTitle xsd:string .
-    :SAPServiceRequest :hasUseCase :UseCase .
-    :UseCase :isAIUseCase xsd:boolean .
-    :UseCase :isBTPUseCase xsd:boolean .
-    :SAPServiceRequest :isDeleted xsd:boolean .
-    :SAPService :isFreeService xsd:boolean .
-    :SAPPartner :isGSSP xsd:boolean .
-    :Product :legalIPOwner xsd:string .
-    :SAPPartner :ofCountry :Country .
-    :SAPPartner :partnerStatus xsd:string .
-    :UseCase :plannedGoLiveDate xsd:date .
-    :Product :productName xsd:string .
-    :Product :productPublicName xsd:string .
-    :Product :productType xsd:string .
-    :SAPServiceRequest :relatesToLoB :LoB .
-    :SAPService :relatesToServiceRequest :SAPServiceRequest .
-    :SAPServiceRequest :requestDate xsd:date .
-    :SAPPartner :requested :SAPServiceRequest .
-    :SAPServiceRequest :requestedBy :SAPPartner .
-    :SAPServiceRequest :requiredSupport :RequiredSupport .
-    :SAPService :revenue xsd:float .
-    :SAPService :serviceType :SAPServiceType .
-    :Product :solutionArea xsd:string .
-    :Product :solutionSubArea xsd:string .
-    :SAPServiceRequest :sourceOfRequest :SourceOfRequest .
-    :SAPService :startDate xsd:date .
-    :UseCase :useCaseStatus xsd:string .
-    :SAPServiceRequest :wasInitiatedBy :SAPServiceRequestInitiator .
-    :SAPServiceRequest a owl:Class ; rdfs:comment "Formal coaching request sent by an SAP partner to SAP. A single request may be used to request multiple services."@en .
-    :UseCase a owl:Class ; rdfs:comment "Use case attached to the partner service request."@en .
-    :solutionArea a owl:DatatypeProperty ; rdfs:comment "It indicates the solution area of the product. It can have the following values:\n\"HXM\"\n\"BPI\"\n\"BTP\"\n\"S4\"\n\"CX\"\n\"WCM\"\n\"Cross\"\n\"XM\"\n\"ISBN\""@en .
-    :hasValue a owl:DatatypeProperty ; rdfs:comment "This property states the name or type or value assumed by an instance."@en .
-    :category a owl:DatatypeProperty ; rdfs:comment "It indicates the category of the object it refers to."@en .
-    :completionDate a owl:DatatypeProperty ; rdfs:comment "It is a property of the service class. It indicates the date of completion of the requested service."@en .
-    :hasDescription a owl:DatatypeProperty ; rdfs:comment "This property is used to provide the description of the use case or SAP organization or the service offered by SAP."@en .
-    :hasTitle a owl:DatatypeProperty ; rdfs:comment "It indicates the title of the use case associated to the service request."@en .
-    :isBTPUseCase a owl:DatatypeProperty ; rdfs:comment "It marks whether the use case involves BTP or not."@en .
-    :isFreeService a owl:DatatypeProperty ; rdfs:comment "It marks whether the requested service is paid or free."@en .
-    :legalIPOwner a owl:DatatypeProperty ; rdfs:comment "It indicates the legal owner of the intellectual property of a certain product."@en .
-    :partnerStatus a owl:DatatypeProperty ; rdfs:comment "It indicates the status of the SAP partner. It can have the following values:\n\"Prospective Partner\"\n\"Active\"\n\"Discontinued\""@en .
-    :plannedGoLiveDate a owl:DatatypeProperty ; rdfs:comment "It indicates the planned go-live date of the solution (if specified) that the service request helped develop."@en .
-    :productName a owl:DatatypeProperty ; rdfs:comment "It indicates the name of the software product."@en .
-    :productPublicName a owl:DatatypeProperty ; rdfs:comment "It indicates the public name of the product."@en .
-    :productType a owl:DatatypeProperty ; rdfs:comment "It indicates the type of the product. It can be:\n\"SAP Product\"\n\"3rd Party Product\"\n\"Service\"\n\"Users and Unallocated\""@en .
-    :revenue a owl:DatatypeProperty ; rdfs:comment "It indicates the revenue earned from the delivery of a certain service."@en .
-    :startDate a owl:DatatypeProperty ; rdfs:comment "It is a property of the service class. It indicates the date the delivery of the requested service began."@en .
-    :SAPEmployee a owl:Class ; rdfs:comment "Person that is employed by SAP and that is involved in the coaching services."@en .
-    :GTMOutcome a owl:Class ; rdfs:comment "Outcome of the Go-to-Market process if there is one related to the service request submitted."@en .
-    :RequiredSupport a owl:Class ; rdfs:comment "Type of support required for the service."@en .
-    :SourceOfRequest a owl:Class ; rdfs:comment "Channels through which the request can arrive. It can be:\n'PCD E-Mail'\n'PBC request'\n'Internal'\n'Others'"@en .
-    :SAPServiceRequestInitiator a owl:Class ; rdfs:comment "Who initiated the service request. It can be:\n'SAP'\n'Customer'\n'Partner'"@en .
-    :belongsToSAPRegion a owl:ObjectProperty ; rdfs:comment "It is a property of the country. It indicates the SAP business region the country belongs to."@en .
-    :btpScenarioType a owl:ObjectProperty ; rdfs:comment "It is a property of the use case. It indicates the use case associated to the service request is related to a specific BTP Scenario."@en .
-    :hasGTMRoute a owl:ObjectProperty ; rdfs:comment "It is a property of the service request. It indicates the Go-to-Market result that the service request intends to produce."@en .
-    :hasPartnerContact a owl:ObjectProperty ; rdfs:comment "It indicates the partner contact person for the service request"@en .
-    :isEmployedBy a owl:ObjectProperty ; rdfs:comment "It indicates which company the employee is employed by."@en .
-    :requiredSupport a owl:ObjectProperty ; rdfs:comment "It is a property of the service request class. It indicates the type of support required in the service request in the context of the associated use case."@en .
-    :category a owl:ObjectProperty ; rdfs:comment "It indicates the category of the object it refers to."@en .
-    :isBTPUseCase a owl:ObjectProperty ; rdfs:comment "It marks whether the use case involves BTP or not."@en .
-    :productName a owl:ObjectProperty ; rdfs:comment "It indicates the name of the software product."@en .
-    :productPublicName a owl:ObjectProperty ; rdfs:comment "It indicates the public name of the product."@en .
-    :revenue a owl:ObjectProperty ; rdfs:comment "It indicates the revenue earned from the delivery of a certain service."@en .
-    :startDate a owl:ObjectProperty ; rdfs:comment "It is a property of the service class. It indicates the date the delivery of the requested service began."@en .
-    :COILExpert a owl:Class ; rdfs:comment "Class of SAP employees that are member of the SAP Co-Innovation Lab, an SAP organization that helps SAP partners to convert ideas for solutions for intelligent enterprises into working prototypes and from there to market-ready solutions."@en .
-    :involvedIn a owl:ObjectProperty ; rdfs:comment "It indicates the person who is involed in some way in the service request."@en .
-    :UseCase a owl:Class ; rdfs:comment "Use case attached to the partner service request."@en .
-    :Country a owl:Class ; rdfs:comment "Country where the service is delivered or country of provenance of the partner."@en .
-    :GTMRoute a owl:Class ; rdfs:comment "Go-to-Market process expected for the submitted service request."@en .
-    :Product a owl:Class ; rdfs:comment "Software product involved in the use case associated to the partner service request."@en .
-    :SAPServiceType a owl:Class ; rdfs:comment "Type of service requested to SAP."@en .
-    :SAPAIScenario a owl:Class ; rdfs:comment "Class of the possible AI scenarios in the SAP domain. It can be:\n'Embedded AI'\n'BTP AI'\n'3rd Party AI'"@en .
-    :requestedBy a owl:ObjectProperty ; rdfs:comment "It is a property of the service request class. It indicates who requested the service request."@en .
-    :belongsToIndustry a owl:ObjectProperty ; rdfs:comment "It is a property of the service request. It indicates the service request belongs to one or more industries (this is because the use case does)."@en .
-    :consistsOf a owl:ObjectProperty ; rdfs:comment "It indicates the service requested through the service request."@en .
-    :hasGTMOutcome a owl:ObjectProperty ; rdfs:comment "It is a property of the use case. It indicates the Go-To-Market result the service request produced."@en .
-    :hasPartnershipType a owl:ObjectProperty ; rdfs:comment "It is a property of the partner class. It specifies the type of partnership existing between SAP and a partner."@en .
-    :relatesToLoB a owl:ObjectProperty ; rdfs:comment "It indicates the line of business the use case associated with the service request refers to."@en .
-    :serviceType a owl:ObjectProperty ; rdfs:comment "It specifies the type of the requested service through a service request."@en .
-    :belongsToServiceRequest a owl:ObjectProperty ; rdfs:comment "It indicates the service request the use case is associated to."@en .
-    :accountName a owl:ObjectProperty ; rdfs:comment "It specifies the account name of the SAP partner."@en .
-    :countryCode a owl:ObjectProperty ; rdfs:comment "It indicates the country code (in the ISO 3166-1 alpha-2 standard) of the country."@en .
-    :createdOnDate a owl:ObjectProperty ; rdfs:comment "It indicates the date the object was created (datetime) in the system."@en .
-    :hasCustomer a owl:ObjectProperty ; rdfs:comment "It marks whether the use case has already a customer or not."@en .
-    :hasID a owl:ObjectProperty ; rdfs:comment "It indicates the unique identifier of the object in the source table fo the original relational data model."@en .
-    :hasStatus a owl:ObjectProperty ; rdfs:comment "It states the status of the service request or of the requested services. It can have the following values:\n'requested'/'submitted'\n'accepted'\n'rejected'\n'in progress'\n'completed'\n'discontinued'\n'canceled'"@en .
-    :isAIUseCase a owl:ObjectProperty ; rdfs:comment "It marks whether the use case is around AI or not."@en .
-    :hasSolution a owl:ObjectProperty ; rdfs:comment "Flag indicating whether the service request produced a solution."@en .
-    :isDeleted a owl:ObjectProperty ; rdfs:comment "Flag that states if the service request is deleted or not."@en .
-    :isGSSP a owl:ObjectProperty ; rdfs:comment "It marks whether an SAP partner is GSSP (global strategic service partner) or not."@en .
-    :modifiedOnDate a owl:ObjectProperty ; rdfs:comment "It indicates the date the object was modified (datetime) in the system."@en .
-    :SAPServiceRequest a owl:Class ; rdfs:comment "Formal coaching request sent by an SAP partner to SAP. A single request may be used to request multiple services."@en .
-    :relatesToServiceRequest a owl:ObjectProperty ; rdfs:comment "It is a property of the service class. It indicates the service request the service belongs to."@en .
-    :SAPPartnerType a owl:Class ; rdfs:comment "Type of SAP partner."@en .
-    :SAPPartner a owl:Class ; rdfs:comment "Company that is in a certain business relationship with SAP"@en .
-    :SAPProgramInitiative a owl:Class ; rdfs:comment "SAP program initiative to which the request is associated."@en .
-    :SAPRegion a owl:Class ; rdfs:comment "Class of SAP business regions."@en .
-    :solutionArea a owl:ObjectProperty ; rdfs:comment "It indicates the solution area of the product. It can have the following values:\n\"HXM\"\n\"BPI\"\n\"BTP\"\n\"S4\"\n\"CX\"\n\"WCM\"\n\"Cross\"\n\"XM\"\n\"ISBN\""@en .
-    :createdBy a owl:ObjectProperty ; rdfs:comment "It indicates who created the object in the SAP system."@en .
-    :deliveredBy a owl:ObjectProperty ; rdfs:comment "It indicates who delivered the service to the partner"@en .
-    :executedBy a owl:ObjectProperty ; rdfs:comment "It indicates who executed the service request"@en .
-    :hasSAPContact a owl:ObjectProperty ; rdfs:comment "It is a property of the service type class. It indicates the responsible person in SAP (identified by his email address) for the service type offered."@en .
-    :requested a owl:ObjectProperty ; rdfs:comment "It indicates the service request the SAP partner requested."@en .
-    :hasValue a owl:ObjectProperty ; rdfs:comment "This property states the name or type or value assumed by an instance."@en .
-    :sourceOfRequest a owl:ObjectProperty ; rdfs:comment "It is a property of the service request class. It indicates which channel the service request originated from. It can be:\n'PCD E-Mail'\n'PBC request'\n'Internal'\n'Others'"@en .
-    :belongsToSAPProgram a owl:ObjectProperty ; rdfs:comment "It is a property of the service request. It indicates the service request belongs to a SAP program initiative."@en .
-    :wasInitiatedBy a owl:ObjectProperty ; rdfs:comment "It is a property of the service request class. It indicates who initiated the service request. It can be:\n'SAP'\n'Customer'\n'Partner'"@en .
-    :completionDate a owl:ObjectProperty ; rdfs:comment "It is a property of the service class. It indicates the date of completion of the requested service."@en .
-    :hasDescription a owl:ObjectProperty ; rdfs:comment "This property is used to provide the description of the use case or SAP organization or the service offered by SAP."@en .
-    :hasTitle a owl:ObjectProperty ; rdfs:comment "It indicates the title of the use case associated to the service request."@en .
-    :isFreeService a owl:ObjectProperty ; rdfs:comment "It marks whether the requested service is paid or free."@en .
-    :legalIPOwner a owl:ObjectProperty ; rdfs:comment "It indicates the legal owner of the intellectual property of a certain product."@en .
-    :partnerStatus a owl:ObjectProperty ; rdfs:comment "It indicates the status of the SAP partner. It can have the following values:\n\"Prospective Partner\"\n\"Active\"\n\"Discontinued\""@en .
-    :plannedGoLiveDate a owl:ObjectProperty ; rdfs:comment "It indicates the planned go-live date of the solution (if specified) that the service request helped develop."@en .
-    :productType a owl:ObjectProperty ; rdfs:comment "It indicates the type of the product. It can be:\n\"SAP Product\"\n\"3rd Party Product\"\n\"Service\"\n\"Users and Unallocated\""@en .
-    :BTPSolutionArchitect a owl:Class ; rdfs:comment "Team of BTP solution architects in SAP who are mandated to coach and guide SAP partners in implementing their solution on BTP."@en .
-    :SAPPartnerContact a owl:Class ; rdfs:comment "A partner employee responsible of the service request on the partner side."@en .
-    :SAPService a owl:Class ; rdfs:comment "Service requested via service request from SAP partner. It is possible that multiple services are associated with the same service request."@en .
-    :SAPPartnerEmployee a owl:Class ; rdfs:comment "Person employed by an SAP Partner."@en .
-    :SAPPartnershipType a owl:Class ; rdfs:comment "Type of partnership existing between and organization and SAP."@en .
-    :SAPOrganization a owl:Class ; rdfs:comment "Organized group of people in SAP with a particular purpose"@en .
-    :Industry a owl:Class ; rdfs:comment "Industry to which the use case is related to."@en .
-    :LoB a owl:Class ; rdfs:comment "Line of businesses the use case is related to."@en .
-    :involves a owl:ObjectProperty ; rdfs:comment "It indicates the service request or service involves a certain person."@en .
-    :aiScenarioType a owl:ObjectProperty ; rdfs:comment "It is a property of the use case. It indicates the service request concerns a certain use case that is related to a specific AI Scenario."@en .
-    :hasPartnerType a owl:ObjectProperty ; rdfs:comment "It is a property of the partner class. Specifies what type of partner the specific organization is for SAP."@en .
-    :modifiedBy a owl:ObjectProperty ; rdfs:comment "It indicates who modified the object in the SAP system."@en .
-    :responsiblePerson a owl:ObjectProperty ; rdfs:comment "Indicates the responsible person in SAP for a certain service or organization."@en .
-    :ofCountry a owl:ObjectProperty ; rdfs:comment "It indicates the country of provenance of the SAP partner."@en .
-    :hasPBCOrderNumber a owl:ObjectProperty ; rdfs:comment "It indicates the unique  PBC order number of the service (if the service was requested through the Parter Benefits Catalog)."@en .
-    :solutionSubArea a owl:ObjectProperty ; rdfs:comment "It indicates the solution subarea of the product. It can have the following values:\n\"Business Network\"\n\"Business Process Intelligence\"\n\"Commerce\"\n\"Core HR and Payroll\"\n\"Cross Business Services\"\n\"Customer Data Solutions\"\n\"Database and Data Management\"\n\"Digital Supply Chain\"\n\"ERP for SME\"\n\"Enterprise Cloud Services (IaaS)\"\n\"Experience Management\"\n\"External Workforce\"\n\"Finance, Q2C and Enterprise Mgmt\"\n\"Foundation/Appl. Dev. & Integration\"\n\"IBSO Projects\"\n\"Industry-specific Applications\"\n\"Learning and Talent\"\n\"Marketing\"\n\"Others\"\n\"Planning and Analytics\"\n\"Premium Engagements\"\n\"Procurement\"\n\"Qualtrics EX\"\n\"Sales Performance Management\"\n\"Sales and Services\"\n\"SuccessFactors Cross\"\n\"Taulia\"\n\"Training and Adoption\"\n\"Travel and Expense\""@en .
-    :useCaseStatus a owl:ObjectProperty ; rdfs:comment "It indicates the status of the use case associated to the partner service request. It can take on one of the following values:\n'in progress'\n'completed'\n'discontinued'\n'not yet started'" .
-    :hasName a owl:ObjectProperty ; rdfs:comment "This property indicates the proper name of an object."@en .
-    :coversProduct a owl:ObjectProperty ; rdfs:comment "It is a property of the service request. It indicates the product involved in the use case that is associated to the service request."@en .
-    :requestDate a owl:ObjectProperty ; rdfs:comment "It is a property of the service request class. It indicates the date the service request was submitted."@en .
-    :SAPEmployee rdfs:subClassOf foaf:Person .
-    :SAPEmployee rdfs:subClassOf :Person .
-    :BTPSolutionArchitect rdfs:subClassOf :SAPEmployee .
-    :COILExpert rdfs:subClassOf :SAPEmployee .
-    :SAPPartnerEmployee rdfs:subClassOf foaf:Person .
-    :SAPPartnerEmployee rdfs:subClassOf :Person .
-    :SAPEmployee rdfs:subClassOf foaf:Agent .
-    :SAPPartner rdfs:subClassOf foaf:Organization .
-    :SAPPartnerContact rdfs:subClassOf :SAPPartnerEmployee .
-    :SAPPartnerEmployee rdfs:subClassOf foaf:Agent .
-    :SAPOrganization rdfs:subClassOf foaf:Organization .`;
+    const completeOntologyTTL = `@prefix : <http://www.semanticweb.org/ontologies/2025/nsmen-ontology/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix owl: <http://www.w3.org/2002/07/owl#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+    @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix time: <http://www.w3.org/2006/time#> .
+    @prefix schema: <https://schema.org/> .
+
+    #################################################################
+    # Classes
+    #################################################################
+
+    :NSMan a owl:Class ; rdfs:comment "National Serviceman subject to obligations and entitlements."@en .
+    :Unit a owl:Class ; rdfs:comment "Military unit that an NSMan serves in."@en .
+    :ServiceBranch a owl:Class ; rdfs:subClassOf :Unit ; rdfs:comment "Branch of the armed services (Army, Navy, Airforce)."@en .
+    :PESStatus a owl:Class ; rdfs:comment "Physical Employment Status category."@en .
+    :Rank a owl:Class ; rdfs:comment "Rank attained by an NSMan."@en .
+    :ServiceType a owl:Class ; rdfs:comment "Type of service or requirement (e.g., IPPT)."@en .
+    :Booking a owl:Class ; rdfs:comment "Represents a booking made by an NSMan."@en .
+    :PolicyRule a owl:Class ; rdfs:comment "Policy rules governing NS obligations (exemptions, eligibility, obligations)."@en .
+    :IPPTAttempt a owl:Class ; rdfs:comment "An attempt by an NSMan to take IPPT."@en .
+    :ExitPermit a owl:Class ; rdfs:comment "Permit allowing NSMan to exit Singapore for a duration."@en .
+    :Deferment a owl:Class ; rdfs:comment "Deferment granted to NS obligations."@en .
+    :Location a owl:Class ; rdfs:comment "Physical location of booking or unit."@en .
+
+    #################################################################
+    # Object Properties
+    #################################################################
+
+    :hasPESStatus a owl:ObjectProperty , owl:FunctionalProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :PESStatus ;
+        rdfs:comment "Links an NSMan to their PES status."@en .
+
+    :servesIn a owl:ObjectProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :Unit ;
+        rdfs:comment "Indicates which unit an NSMan serves in."@en .
+
+    :hasRank a owl:ObjectProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :Rank ;
+        rdfs:comment "Indicates the rank of the NSMan."@en .
+
+    :hasObligation a owl:ObjectProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :PolicyRule ;
+        rdfs:comment "Obligation rules applying to the NSMan."@en .
+
+    :hasBooking a owl:ObjectProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :Booking ;
+        rdfs:comment "Connects an NSMan to a booking they made (e.g., IPPT booking)."@en .
+
+    :occursAt a owl:ObjectProperty ;
+        rdfs:domain :Booking ;
+        rdfs:range :Location ;
+        rdfs:comment "Indicates where the booking takes place."@en .
+
+    :hasTime a owl:ObjectProperty ;
+        rdfs:domain :Booking ;
+        rdfs:range time:TemporalEntity ;
+        rdfs:comment "Time associated with a booking."@en .
+
+    :appliesTo a owl:ObjectProperty ;
+        rdfs:domain :PolicyRule ;
+        rdfs:range [ owl:unionOf ( :NSMan :PESStatus :Unit ) ] ;
+        rdfs:comment "Indicates who/what a policy rule applies to."@en .
+
+    :hasScope a owl:ObjectProperty ;
+        rdfs:domain :PolicyRule ;
+        rdfs:range [ owl:unionOf ( :ServiceBranch :Unit ) ] ;
+        rdfs:comment "Scope of a policy rule (unit or branch level)."@en .
+
+    :hasDeferment a owl:ObjectProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :Deferment ;
+        rdfs:comment "Indicates deferments granted to an NSMan."@en .
+
+    :hasExitPermit a owl:ObjectProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range :ExitPermit ;
+        rdfs:comment "Indicates exit permits granted to an NSMan."@en .
+
+    #################################################################
+    # Datatype Properties
+    #################################################################
+
+    :nricHash a owl:DatatypeProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range xsd:string ;
+        rdfs:comment "Hashed NRIC of the NSMan for privacy."@en .
+
+    foaf:name a owl:DatatypeProperty ;
+        rdfs:domain [ owl:unionOf ( :NSMan :Unit :Location ) ] ;
+        rdfs:range xsd:string .
+
+    foaf:mbox a owl:DatatypeProperty ;
+        rdfs:domain :NSMan ;
+        rdfs:range xsd:string ;
+        rdfs:comment "Email contact of the NSMan."@en .
+
+    :bookingRef a owl:DatatypeProperty ;
+        rdfs:domain :Booking ;
+        rdfs:range xsd:string ;
+        rdfs:comment "Unique reference ID of the booking."@en .
+
+    skos:prefLabel a owl:DatatypeProperty ;
+        rdfs:domain [ owl:unionOf ( :Booking :Deferment :ExitPermit ) ] ;
+        rdfs:range xsd:string ;
+        rdfs:comment "Label describing booking or exemption status."@en .
+
+    schema:identifier a owl:DatatypeProperty ;
+        rdfs:domain owl:Thing ;
+        rdfs:range xsd:string .
+
+    schema:dateCreated a owl:DatatypeProperty ;
+        rdfs:domain owl:Thing ;
+        rdfs:range xsd:dateTime .
+
+    schema:dateModified a owl:DatatypeProperty ;
+        rdfs:domain owl:Thing ;
+        rdfs:range xsd:dateTime .
+
+    time:hasBeginning a owl:DatatypeProperty ;
+        rdfs:domain time:Interval ;
+        rdfs:range xsd:dateTime .
+
+    time:hasEnd a owl:DatatypeProperty ;
+        rdfs:domain time:Interval ;
+        rdfs:range xsd:dateTime .
+
+    :attemptsPerYear a owl:DatatypeProperty ;
+        rdfs:domain :PolicyRule ;
+        rdfs:range xsd:integer ;
+        rdfs:comment "Maximum attempts per year (e.g., IPPT attempts)."@en .
+
+    #################################################################
+    # Example Individuals
+    #################################################################
+
+    :JohnTan a :NSMan ;
+        :nricHash "S1234567Z_SHA256" ;
+        foaf:name "John Tan" ;
+        foaf:mbox "john.tan@example.com" ;
+        :hasPESStatus :PES_B ;
+        :servesIn :Unit_1SIR ;
+        :hasRank :SGT ;
+        :hasBooking :IPPTBooking_2025_0001 ;
+        :hasExitPermit :ExitPermit_2025_01 .
+
+    :Unit_1SIR a :Unit ;
+        schema:identifier "1SIR" ;
+        foaf:name "1st Singapore Infantry Regiment" .
+
+    :PES_B a :PESStatus .
+
+    :IPPTBooking_2025_0001 a :IPPTBooking ;
+        :bookingRef "IPPT-2025-0001" ;
+        skos:prefLabel "Confirmed" ;
+        :occursAt :Fitness_Centre_Khatib ;
+        :hasTime :IPPT_2025_0001_time .
+
+    :Fitness_Centre_Khatib a :Location ;
+        foaf:name "Fitness Centre Khatib" .
+
+    :IPPT_2025_0001_time a time:Interval ;
+        time:hasBeginning "2025-10-12T09:00:00"^^xsd:dateTime ;
+        time:hasEnd "2025-10-12T10:00:00"^^xsd:dateTime .
+
+    :Rule_PESF_Exempt_IPPT a :ExemptionRule ;
+        :appliesTo :IPPT ;
+        :appliesTo :PES_F ;
+        schema:identifier "Policy-001" .`;
+
 
     // const networkGraphModel = generateNetworkGraphModel(exampleSqlSelectQuery, completeOntologyTTL);
     // console.log(networkGraphModel.getData());
@@ -955,8 +958,8 @@ FROM TABLE_KG
 
           var newSparqlValue = this.getView().byId("FPage7EnhancedAdvisoryBuddy--generatedSparqlQuery").getValue();
 
-          var sUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.com/execute_query_raw";
-          var sKGSemanticsSQLUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.com/execute_query_raw?query_type=sql";
+          var sUrl = "https://kgapp.cfapps.ap10.hana.ondemand.com/execute_query_raw";
+          var sKGSemanticsSQLUrl = "https://kgapp.cfapps.ap10.hana.ondemand.com/execute_query_raw?query_type=sql";
 
           var that = this;
 
@@ -1052,14 +1055,14 @@ FROM TABLE_KG
           results: [],
           columns: [],
           sparqlQuery: "",
-          ontology: "http://www.semanticweb.org/ontologies/2025/advisory-ontology-test",
-          dataSource: "http://www.semanticweb.org/ontologies/2025/advisory-ontology-test"
+          ontology: "http://www.semanticweb.org/ontologies/2025/advisory-rdf-test",
+          dataSource: "http://www.semanticweb.org/ontologies/2025/advisory-rdf-test"
         });
         this.getView().setModel(oModel, "kgSparqlExplorerTable");
 
         var newSparqlValue = this.getView().byId("FPage8SparqlExplorer--generatedSparqlQueryForSparlExplorer").getValue();
 
-        var sUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.com/execute_query_raw";
+        var sUrl = "https://kgapp.cfapps.ap10.hana.ondemand.com/execute_query_raw";
 
         var that = this;
 
@@ -1185,14 +1188,14 @@ FROM TABLE_KG
           results: [],
           columns: [],
           sparqlQuery: "",
-          ontology: "http://www.semanticweb.org/ontologies/2025/advisory-ontology-test",
-          dataSource: "http://www.semanticweb.org/ontologies/2025/advisory-ontology-test"
+          ontology: "http://www.semanticweb.org/ontologies/2025/advisory-rdf-test",
+          dataSource: "http://www.semanticweb.org/ontologies/2025/advisory-rdf-test"
         });
         this.getView().setModel(oModel, "kgSparqlTable");
 
         var that = this;
-        var sTranslateSqlUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.com/translate_nl_to_new";
-        var sUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.comexecute_query_raw?query_type=sql";
+        var sTranslateSqlUrl = "https://kgapp.cfapps.ap10.hana.ondemand.com/translate_nl_to_new";
+        var sUrl = "https://kgapp.cfapps.ap10.hana.ondemand.comexecute_query_raw?query_type=sql";
 
         const rawnlValue = this.getView().byId("FPage7EnhancedAdvisoryBuddy--nlKGSemanticsInput").getValue();
         const searchValue = this.getView().byId("FPage7EnhancedAdvisoryBuddy--generatedSparqlQuery").getValue();
@@ -1415,8 +1418,8 @@ FROM TABLE_KG
           results: [],
           columns: [],
           sparqlQuery: "",
-          ontology: "http://www.semanticweb.org/ontologies/2025/advisory-ontology-test",
-          dataSource: "http://www.semanticweb.org/ontologies/2025/advisory-ontology-test"
+          ontology: "http://www.semanticweb.org/ontologies/2025/advisory-rdf-test",
+          dataSource: "http://www.semanticweb.org/ontologies/2025/advisory-rdf-test"
         });
         this.getView().setModel(oModel, "kgSparqlTable");
 
@@ -1460,9 +1463,9 @@ FROM TABLE_KG
         // }
 
         var that = this;
-        var sUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.com/execute_query_raw";
+        var sUrl = "https://kgapp.cfapps.ap10.hana.ondemand.com/execute_query_raw";
 
-        var sTranslateUrl = "https://kgwebinar.cfapps.ap10.hana.ondemand.com/translate_nl_to_sparql";
+        var sTranslateUrl = "https://kgapp.cfapps.ap10.hana.ondemand.com/translate_nl_to_sparql";
         var oModel = this.getView().getModel("kgSparqlTable");
 
         var oPayload = {
@@ -1642,7 +1645,7 @@ FROM TABLE_KG
         //   sSparqlQuery = "prefix owl: <http://www.w3.org/2002/07/owl#>\n" + sSparqlQuery;
         // }
 
-        // sSparqlQuery = "prefix : <http://www.semanticweb.org/ontologies/2025/advisory-ontology-test/>\n" + sSparqlQuery;
+        // sSparqlQuery = "prefix : <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>\n" + sSparqlQuery;
 
         // // Step 5: Add FROM clause if missing
         // if (sDataSource && !sSparqlQuery.includes("FROM")) {
@@ -1772,7 +1775,7 @@ FROM TABLE_KG
       //     sSparqlQuery = "prefix owl: <http://www.w3.org/2002/07/owl#>\n" + sSparqlQuery;
       //   }
 
-      //   sSparqlQuery = "prefix : <http://www.semanticweb.org/ontologies/2025/advisory-ontology-test/>\n" + sSparqlQuery;
+      //   sSparqlQuery = "prefix : <http://www.semanticweb.org/ontologies/2025/advisory-rdf-test/>\n" + sSparqlQuery;
 
       //   // Step 5: Add FROM clause if missing
       //   if (sDataSource && !sSparqlQuery.includes("FROM")) {

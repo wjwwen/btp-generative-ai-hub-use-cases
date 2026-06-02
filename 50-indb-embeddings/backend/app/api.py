@@ -39,6 +39,10 @@ else:
 connection = dataframe.ConnectionContext(hanaURL, hanaPort, hanaUser, hanaPW)
 
 app = Flask(__name__)
+#CORS(app, origins=["http://localhost:30000"], 
+#     methods=["GET", "POST", "OPTIONS"],
+#     allow_headers=["Content-Type"])
+
 CORS(app)
 
 # -------------------------------
@@ -161,6 +165,7 @@ def update_categories_and_projects():
     
     cursor = connection.connection.cursor()
     
+    # Ensure tables exist
     create_categories_table_if_not_exists()
     cursor.execute("TRUNCATE TABLE CATEGORIES")
     
@@ -176,14 +181,17 @@ def update_categories_and_projects():
         cursor.execute(insert_sql)
     
     categories_df = dataframe.DataFrame(connection, 'SELECT * FROM CATEGORIES')
-    advisories_df = dataframe.DataFrame(connection, 'SELECT "RULE_ID", "TOPIC" FROM MHA_ADVISORIES4')
     
-    # Match advisories to categories using COSINE similarity
-    for advisory in advisories_df.collect().to_dict(orient='records'):
-        rule_id = advisory['RULE_ID']
-        topic = advisory['TOPIC']
+    # Fetch bookings to match against categories
+    bookings_df = dataframe.DataFrame(connection, 'SELECT "NSMAN_ID", "STATUS_CODE", "TOPIC" FROM MHA_ADVISORIES4')
+    
+    # Match bookings to categories using COSINE similarity on TOPIC or STATUS_CODE mapping
+    for booking in bookings_df.collect().to_dict(orient='records'):
+        nsman_id = booking['NSMAN_ID']
+        topic = booking.get('TOPIC', '')  # Optional field
+        status_code = booking.get('STATUS_CODE', '')  # Optional mapping
         
-        if not isinstance(rule_id, int) and not (isinstance(rule_id, str) and rule_id.isdigit()):
+        if not nsman_id:
             continue
         
         similarities = []
@@ -191,42 +199,54 @@ def update_categories_and_projects():
             category_id = category['index']
             category_description = category['category_descr']
             
-            similarity_sql = f"""
-                SELECT COSINE_SIMILARITY(
-                    VECTOR_EMBEDDING('{topic.replace("'", "''")}', 'DOCUMENT', 'SAP_NEB.20240715'),
-                    VECTOR_EMBEDDING('{category_description.replace("'", "''")}', 'DOCUMENT', 'SAP_NEB.20240715')
-                ) AS similarity
-                FROM DUMMY
-            """
-            similarity_df = dataframe.DataFrame(connection, similarity_sql)
-            similarity_results = similarity_df.collect()
-            if not similarity_results.empty:
-                similarity = similarity_results.iloc[0]['SIMILARITY']
-                similarities.append((category_id, similarity))
+            # Compute similarity only if topic exists
+            if topic:
+                similarity_sql = f"""
+                    SELECT COSINE_SIMILARITY(
+                        VECTOR_EMBEDDING('{topic.replace("'", "''")}', 'DOCUMENT', 'SAP_NEB.20240715'),
+                        VECTOR_EMBEDDING('{category_description.replace("'", "''")}', 'DOCUMENT', 'SAP_NEB.20240715')
+                    ) AS similarity
+                    FROM DUMMY
+                """
+                similarity_df = dataframe.DataFrame(connection, similarity_sql)
+                similarity_results = similarity_df.collect()
+                if not similarity_results.empty:
+                    similarity = similarity_results.iloc[0]['SIMILARITY']
+                    similarities.append((category_id, similarity))
         
+        # If similarity search found a match, insert mapping
         if similarities:
             most_similar_category = max(similarities, key=lambda x: x[1])
             category_id = most_similar_category[0]
+        else:
+            # Optionally: map by STATUS_CODE if no topic similarity found
+            category_id = None  # Could implement a STATUS_CODE mapping table
+        
+        if category_id is not None:
             insert_sql = f"""
                 INSERT INTO PROJECT_BY_CATEGORY ("PROJECT_ID", "CATEGORY_ID")
-                VALUES ('{rule_id}', {category_id})
+                VALUES ('{nsman_id}', {category_id})
             """
             cursor.execute(insert_sql)
     
     cursor.close()
     return jsonify({"message": "Categories and project categories updated successfully"}), 200
 
+
 @app.route('/get_all_project_categories', methods=['GET'])
 def get_all_project_categories():
+    # Query PROJECT_BY_CATEGORY mapped to NSMAN_ID
     sql_query = """
-        SELECT pbc."PROJECT_ID", c."category_label"
+        SELECT pbc."PROJECT_ID" AS nsman_id, c."category_label"
         FROM "PROJECT_BY_CATEGORY" pbc
         JOIN "CATEGORIES" c ON pbc."CATEGORY_ID" = c."index"
+        ORDER BY pbc."PROJECT_ID"
     """
     hana_df = dataframe.DataFrame(connection, sql_query)
     project_categories = hana_df.collect()
     results = project_categories.to_dict(orient='records')
-    return jsonify({"project_categories": results}), 200
+    return jsonify({"nsman_categories": results}), 200
+
 
 @app.route('/get_categories', methods=['GET'])
 def get_categories():
@@ -238,17 +258,17 @@ def get_categories():
 
 @app.route('/get_advisories_by_expert_and_category', methods=['GET'])
 def get_advisories_by_expert_and_category():
-    expert = request.args.get('expert')
+    expert_id = request.args.get('nsman_id')
     
-    if not expert:
-        return jsonify({"error": "Expert is required"}), 400
-    
+    if not expert_id:
+        return jsonify({"error": "nsman_id is required"}), 400
+
     sql_query = f"""
-        SELECT c."category_label" AS category, COUNT(a."RULE_ID") AS projects
+        SELECT c."category_label" AS category, COUNT(a."NSMAN_ID") AS projects
         FROM "PROJECT_BY_CATEGORY" pbc
         JOIN "CATEGORIES" c ON pbc."CATEGORY_ID" = c."index"
-        JOIN "MHA_ADVISORIES4" a ON pbc."PROJECT_ID" = a."RULE_ID"
-        WHERE a."NSMAN_ID" = '{expert.replace("'", "''")}'
+        JOIN "MHA_ADVISORIES4" a ON pbc."PROJECT_ID" = a."NSMAN_ID"
+        WHERE a."NSMAN_ID" = '{expert_id.replace("'", "''")}'
         GROUP BY c."category_label"
     """
     hana_df = dataframe.DataFrame(connection, sql_query)
@@ -256,10 +276,6 @@ def get_advisories_by_expert_and_category():
     results = advisories_by_category.to_dict(orient='records')
     return jsonify({"advisories_by_category": results}), 200
 
-import re
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
 
 @app.route('/compare_text_to_existing', methods=['POST'])
 def compare_text_to_existing():
@@ -407,5 +423,5 @@ def create_app():
     return app
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 3000))
+    port = int(os.environ.get("PORT", 30000))
     app.run(host="0.0.0.0", port=port, debug=False)
