@@ -1,4 +1,5 @@
 @prefix : <http://www.semanticweb.org/ontologies/2025/nsmen-ontology/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 :PES_A rdf:type :PESStatus .
 :PES_B rdf:type :PESStatus .

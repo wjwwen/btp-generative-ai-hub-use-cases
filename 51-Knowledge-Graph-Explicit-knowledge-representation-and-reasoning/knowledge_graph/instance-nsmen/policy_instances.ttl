@@ -1,5 +1,8 @@
 @prefix : <http://www.semanticweb.org/ontologies/2025/nsmen-ontology/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix schema: <https://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 :Rule_PESF_Exempt_IPPT rdf:type :ExemptionRule ;
     :appliesTo :PES_F ;
